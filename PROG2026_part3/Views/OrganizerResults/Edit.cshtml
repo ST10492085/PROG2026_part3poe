@@ -1,0 +1,12 @@
+@model ResultFormViewModel
+@{
+    ViewData["Title"] = "Edit result";
+}
+<h1 class="page-title">Edit result</h1>
+<div class="card"><div class="card-body">
+    <form asp-action="Edit" method="post">
+        <partial name="_ResultForm" model="Model" />
+        <button type="submit" class="btn btn-accent">Save changes</button>
+        <a class="btn btn-outline-secondary" asp-action="Index" asp-route-eventId="@Model.EventId">Cancel</a>
+    </form>
+</div></div>

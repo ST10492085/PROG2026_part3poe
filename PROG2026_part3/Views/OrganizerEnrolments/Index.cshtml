@@ -1,0 +1,41 @@
+@model EventParticipantsViewModel
+@{
+    ViewData["Title"] = "Enrolments";
+}
+<a asp-controller="OrganizerEvents" asp-action="Index" class="text-decoration-none"><i class="bi bi-arrow-left"></i> Back to my events</a>
+
+<div class="d-flex justify-content-between align-items-center my-3">
+    <div>
+        <h1 class="page-title mb-0">Enrolments</h1>
+        <p class="text-muted mb-0">@Model.Event.Name &middot; @Model.Event.EventDate.ToString("dd MMM yyyy") &middot; @Model.Rows.Count participant(s)</p>
+    </div>
+    <a class="btn btn-accent" asp-controller="OrganizerResults" asp-action="Index" asp-route-eventId="@Model.Event.Id"><i class="bi bi-trophy"></i> Enter results</a>
+</div>
+
+@if (Model.Rows.Count == 0)
+{
+    <div class="empty-state text-center">
+        <i class="bi bi-people"></i>
+        <h4>Nobody has enrolled yet</h4>
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle bg-white rounded">
+            <thead><tr><th>Participant</th><th>Email</th><th>Category</th><th>Enrolled on</th><th>Status</th></tr></thead>
+            <tbody>
+                @foreach (EnrolmentRow row in Model.Rows)
+                {
+                    <tr>
+                        <td><strong>@row.Enrolment.ParticipantName</strong></td>
+                        <td>@row.Enrolment.ParticipantEmail</td>
+                        <td>@row.Enrolment.CategoryName</td>
+                        <td>@row.Enrolment.EnrolledAt.ToString("dd MMM yyyy")</td>
+                        <td><span class="badge @DisplayHelper.StatusBadgeClass(row.Status)">@row.Status</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,0 +1,59 @@
+@model EventParticipantsViewModel
+@{
+    ViewData["Title"] = "Results";
+    bool notYetHeld = Model.Event.EventDate.Date > DateTime.Now.Date;
+}
+<a asp-controller="OrganizerEvents" asp-action="Index" class="text-decoration-none"><i class="bi bi-arrow-left"></i> Back to my events</a>
+
+<div class="my-3">
+    <h1 class="page-title mb-0">Results entry</h1>
+    <p class="text-muted mb-0">@Model.Event.Name &middot; @Model.Event.EventDate.ToString("dd MMM yyyy")</p>
+</div>
+
+@if (notYetHeld)
+{
+    <div class="alert alert-info"><i class="bi bi-info-circle"></i> This event has not taken place yet. You can still capture results (for example while testing).</div>
+}
+<p class="text-muted">A saved result is <strong>published immediately</strong>: the participant sees it on their "My Results" page.</p>
+
+@if (Model.Rows.Count == 0)
+{
+    <div class="empty-state text-center">
+        <i class="bi bi-people"></i>
+        <h4>No enrolled participants</h4>
+        <p class="text-muted">Results can only be captured for participants who enrolled.</p>
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle bg-white rounded">
+            <thead><tr><th>Participant</th><th>Category</th><th>Finish time</th><th>Position</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+                @foreach (EnrolmentRow row in Model.Rows)
+                {
+                    <tr>
+                        <td><strong>@row.Enrolment.ParticipantName</strong></td>
+                        <td>@row.Enrolment.CategoryName</td>
+                        <td class="finish-time">@(row.Result != null ? DisplayHelper.FormatFinishTime(row.Result.FinishTime) : "-")</td>
+                        <td>@(row.Result != null ? DisplayHelper.Ordinal(row.Result.Position) : "-")</td>
+                        <td><span class="badge @DisplayHelper.StatusBadgeClass(row.Status)">@row.Status</span></td>
+                        <td class="text-end">
+                            @if (row.Result == null)
+                            {
+                                <a class="btn btn-sm btn-accent" asp-action="Create" asp-route-eventId="@Model.Event.Id" asp-route-userId="@row.Enrolment.UserId" asp-route-categoryId="@row.Enrolment.CategoryId">Add result</a>
+                            }
+                            else
+                            {
+                                <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-eventId="@Model.Event.Id" asp-route-resultId="@row.Result.Id">Edit</a>
+                                <form asp-action="Delete" asp-route-eventId="@Model.Event.Id" asp-route-resultId="@row.Result.Id" method="post" class="d-inline" onsubmit="return confirm('Delete this result?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,0 +1,12 @@
+@model ResultFormViewModel
+@{
+    ViewData["Title"] = "Add result";
+}
+<h1 class="page-title">Add result</h1>
+<div class="card"><div class="card-body">
+    <form asp-action="Create" method="post">
+        <partial name="_ResultForm" model="Model" />
+        <button type="submit" class="btn btn-accent">Save and publish</button>
+        <a class="btn btn-outline-secondary" asp-action="Index" asp-route-eventId="@Model.EventId">Cancel</a>
+    </form>
+</div></div>

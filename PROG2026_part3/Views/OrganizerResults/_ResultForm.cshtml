@@ -1,0 +1,27 @@
+@model ResultFormViewModel
+<div asp-validation-summary="ModelOnly" class="text-danger mb-2"></div>
+<input type="hidden" asp-for="EventId" />
+<input type="hidden" asp-for="ResultId" />
+<input type="hidden" asp-for="UserId" />
+<input type="hidden" asp-for="CategoryId" />
+<input type="hidden" asp-for="EventName" />
+<input type="hidden" asp-for="ParticipantName" />
+<input type="hidden" asp-for="CategoryName" />
+
+<div class="alert alert-light border">
+    <strong>@Model.ParticipantName</strong> &middot; @Model.CategoryName &middot; @Model.EventName
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-3">
+        <label asp-for="FinishTime" class="form-label"></label>
+        <input asp-for="FinishTime" type="text" class="form-control" placeholder="e.g. 00:45:30" pattern="\d{1,2}:\d{2}:\d{2}" />
+        <div class="form-text">Hours:minutes:seconds, for example 00:45:30.</div>
+        <span asp-validation-for="FinishTime" class="text-danger small"></span>
+    </div>
+    <div class="col-md-6 mb-3">
+        <label asp-for="Position" class="form-label"></label>
+        <input asp-for="Position" type="number" min="1" class="form-control" />
+        <span asp-validation-for="Position" class="text-danger small"></span>
+    </div>
+</div>

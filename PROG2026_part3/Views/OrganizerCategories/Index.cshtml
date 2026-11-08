@@ -1,0 +1,48 @@
+@model EventModel
+@{
+    ViewData["Title"] = "Categories";
+}
+<a asp-controller="OrganizerEvents" asp-action="Index" class="text-decoration-none"><i class="bi bi-arrow-left"></i> Back to my events</a>
+
+<div class="d-flex justify-content-between align-items-center my-3">
+    <div>
+        <h1 class="page-title mb-0">Categories</h1>
+        <p class="text-muted mb-0">@Model.Name &middot; @Model.EventDate.ToString("dd MMM yyyy")</p>
+    </div>
+    <a class="btn btn-accent" asp-action="Create" asp-route-eventId="@Model.Id"><i class="bi bi-plus-lg"></i> Add category</a>
+</div>
+
+@if (Model.Categories.Count == 0)
+{
+    <div class="empty-state text-center">
+        <i class="bi bi-tags"></i>
+        <h4>No categories yet</h4>
+        <p class="text-muted">Participants choose a category when they enrol, so add at least one (e.g. Under 20, Senior, 10km, 21km).</p>
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle bg-white rounded">
+            <thead><tr><th>Name</th><th>Min age</th><th>Max age</th><th>Distance</th><th>Description</th><th></th></tr></thead>
+            <tbody>
+                @foreach (CategoryModel c in Model.Categories)
+                {
+                    <tr>
+                        <td><strong>@c.Name</strong></td>
+                        <td>@(c.MinAge?.ToString() ?? "-")</td>
+                        <td>@(c.MaxAge?.ToString() ?? "-")</td>
+                        <td>@(c.DistanceKm.HasValue ? c.DistanceKm.Value.ToString("0.##") + " km" : "-")</td>
+                        <td class="text-muted">@c.Description</td>
+                        <td class="text-end">
+                            <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-eventId="@Model.Id" asp-route-id="@c.Id">Edit</a>
+                            <form asp-action="Delete" asp-route-eventId="@Model.Id" asp-route-id="@c.Id" method="post" class="d-inline" onsubmit="return confirm('Delete this category?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
