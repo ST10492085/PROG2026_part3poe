@@ -1,0 +1,67 @@
+@model HomeViewModel
+@{
+    ViewData["Title"] = "Upcoming events";
+}
+
+<section class="hero mb-4">
+    <h1>Find your next <span class="brand-accent">race</span></h1>
+    <p class="lead mb-0">Run, walk or cycle. Browse upcoming events, pick a category and enter in seconds.</p>
+</section>
+
+@* Filtering: this is a GET form, so the chosen filters appear in the address bar. *@
+<form method="get" asp-controller="Home" asp-action="Index" class="card filter-card mb-4">
+    <div class="card-body row g-3 align-items-end">
+        <div class="col-md-4">
+            <label class="form-label" for="search">Search</label>
+            <input type="text" id="search" name="search" value="@Model.Search" class="form-control" placeholder="Name, location or description" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-label" for="eventType">Type</label>
+            <select id="eventType" name="eventType" class="form-select">
+                <option value="">All types</option>
+                <option value="Run" selected="@(Model.EventType == "Run")">Run</option>
+                <option value="Walk" selected="@(Model.EventType == "Walk")">Walk</option>
+                <option value="Cycle" selected="@(Model.EventType == "Cycle")">Cycle</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label" for="fromDate">From</label>
+            <input type="date" id="fromDate" name="fromDate" value="@(Model.FromDate?.ToString("yyyy-MM-dd"))" class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <label class="form-label" for="toDate">To</label>
+            <input type="date" id="toDate" name="toDate" value="@(Model.ToDate?.ToString("yyyy-MM-dd"))" class="form-control" />
+        </div>
+        <div class="col-md-2 d-grid">
+            <button type="submit" class="btn btn-accent"><i class="bi bi-funnel"></i> Filter</button>
+        </div>
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="showPast" name="showPast" value="true" checked="@Model.ShowPast" />
+                <label class="form-check-label" for="showPast">Include past events</label>
+            </div>
+            <a asp-controller="Home" asp-action="Index" class="small">Clear filters</a>
+        </div>
+    </div>
+</form>
+
+@if (Model.Events.Count == 0)
+{
+    <div class="empty-state text-center">
+        <i class="bi bi-calendar-x"></i>
+        <h4>No events found</h4>
+        <p class="text-muted">Try changing the filters, or check back soon.</p>
+    </div>
+}
+else
+{
+    <p class="text-muted">@Model.Events.Count @(Model.Events.Count == 1 ? "event" : "events") found</p>
+    <div class="row g-4">
+        @foreach (EventModel item in Model.Events)
+        {
+            <div class="col-md-6 col-lg-4">
+                <partial name="_EventCard" model="item" />
+            </div>
+        }
+    </div>
+}

@@ -1,0 +1,110 @@
+@model EventDetailsViewModel
+@{
+    EventModel ev = Model.Event;
+    ViewData["Title"] = ev.Name;
+
+    string status = DisplayHelper.EventStatus(ev.EventDate, DateTime.Now);
+    bool isPast = status == "Completed";
+    string? role = Context.Session.GetRole();
+    string banner = string.IsNullOrEmpty(ev.BannerImageUrl)
+        ? Url.Content("~/images/default-banner.svg")
+        : ev.BannerImageUrl;
+}
+
+<a asp-controller="Home" asp-action="Index" class="text-decoration-none"><i class="bi bi-arrow-left"></i> Back to events</a>
+
+<div class="detail-banner mt-2 mb-4">
+    @* The image comes straight from Azure Blob Storage (its URL was saved by the API). *@
+    <img src="@banner" alt="Banner for @ev.Name" />
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+            <span class="badge event-type-inline @DisplayHelper.EventTypeBadgeClass(ev.EventType)">@ev.EventType</span>
+            <span class="badge @DisplayHelper.StatusBadgeClass(status)">@status</span>
+        </div>
+        <h1>@ev.Name</h1>
+        <p class="lead">@ev.Description</p>
+
+        <ul class="list-unstyled info-list">
+            <li><i class="bi bi-calendar3"></i> <strong>When:</strong> @ev.EventDate.ToString("dddd, dd MMMM yyyy 'at' HH:mm")</li>
+            <li><i class="bi bi-geo-alt"></i> <strong>Where:</strong> @ev.Location</li>
+            <li><i class="bi bi-signpost-split"></i> <strong>Distance:</strong> @ev.DistanceKm.ToString("0.##") km</li>
+        </ul>
+
+        <h4 class="mt-4">Categories</h4>
+        @if (ev.Categories.Count == 0)
+        {
+            <p class="text-muted">The organiser has not added any categories yet.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead><tr><th>Category</th><th>Ages</th><th>Distance</th><th>Description</th></tr></thead>
+                    <tbody>
+                        @foreach (CategoryModel c in ev.Categories)
+                        {
+                            <tr>
+                                <td><strong>@c.Name</strong></td>
+                                <td>@(c.MinAge.HasValue || c.MaxAge.HasValue ? $"{c.MinAge?.ToString() ?? "any"} - {c.MaxAge?.ToString() ?? "any"}" : "All ages")</td>
+                                <td>@(c.DistanceKm.HasValue ? c.DistanceKm.Value.ToString("0.##") + " km" : "-")</td>
+                                <td class="text-muted">@c.Description</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card enrol-card">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-ticket-perforated"></i> Enter this event</h5>
+
+                @if (role == null)
+                {
+                    <p class="text-muted">Log in as a participant to enter this event.</p>
+                    <a class="btn btn-accent w-100 mb-2" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Context.Request.Path">Log in</a>
+                    <a class="btn btn-outline-secondary w-100" asp-controller="Account" asp-action="Register">Create an account</a>
+                }
+                else if (role == "Organizer")
+                {
+                    <p class="text-muted mb-0">You are logged in as an organiser. Only participants can enter events.</p>
+                }
+                else if (Model.MyEnrollment != null)
+                {
+                    <div class="alert alert-success mb-3">
+                        <i class="bi bi-check-circle-fill"></i> You are enrolled in <strong>@Model.MyEnrollment.CategoryName</strong>.
+                    </div>
+                    <a class="btn btn-accent w-100" asp-controller="Participant" asp-action="MyEvents">Go to My Events</a>
+                }
+                else if (isPast)
+                {
+                    <p class="text-muted mb-0">This event has already taken place, so enrolment is closed.</p>
+                }
+                else if (ev.Categories.Count == 0)
+                {
+                    <p class="text-muted mb-0">Enrolment opens once the organiser adds categories.</p>
+                }
+                else
+                {
+                    <form asp-controller="Participant" asp-action="Enrol" method="post">
+                        <input type="hidden" name="eventId" value="@ev.Id" />
+                        <label class="form-label" for="categoryId">Choose your category</label>
+                        <select class="form-select mb-3" id="categoryId" name="categoryId" required>
+                            <option value="">Select a category...</option>
+                            @foreach (CategoryModel c in ev.Categories)
+                            {
+                                <option value="@c.Id">@c.Name</option>
+                            }
+                        </select>
+                        <button type="submit" class="btn btn-accent w-100">Enrol now</button>
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+</div>
