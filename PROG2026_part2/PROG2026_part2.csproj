@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <!-- Lets "dotnet user-secrets" keep the Azure connection string out of source control. -->
+    <UserSecretsId>raceday-api-part3</UserSecretsId>
+
+    <!-- Generates PROG2026_part2.xml from the /// comments so Swagger can show endpoint descriptions. -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- 1591 = "missing XML comment"; silenced so DTO/model members don't flood the build output. -->
+    <NoWarn>$(NoWarn);1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      The unit-test project lives in the same repository (tests/ folder).
+      Without this exclusion the web project would try to compile the test
+      source files as well, because the SDK includes every *.cs file below
+      the project folder by default.
+    -->
+    <Compile Remove="tests\**" />
+    <Content Remove="tests\**" />
+    <EmbeddedResource Remove="tests\**" />
+    <None Remove="tests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Entity Framework Core (Code-First) with SQL Server -->
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+
+    <!-- Azure Blob Storage (image uploads) -->
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.19.1" />
+
+    <!-- Swagger / OpenAPI -->
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.7.0" />
+  </ItemGroup>
+
+</Project>
