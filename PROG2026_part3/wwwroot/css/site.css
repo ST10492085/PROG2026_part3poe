@@ -1,0 +1,120 @@
+/* RaceDay theme: navy + energetic orange, colour-coded statuses. */
+
+:root {
+    --rd-navy: #0b1f3a;
+    --rd-navy-light: #16335c;
+    --rd-orange: #ff6b1a;
+    --rd-orange-dark: #e55a0d;
+    --rd-green: #1fa971;
+    --rd-blue: #2f6fed;
+    --rd-amber: #f5a524;
+    --rd-purple: #7c4dff;
+    --rd-teal: #0fa3b1;
+    --rd-bg: #f4f6fa;
+}
+
+body {
+    background: var(--rd-bg);
+    color: #1c2733;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main { flex: 1; }
+
+/* ---------- Navigation ---------- */
+.raceday-nav {
+    background: linear-gradient(90deg, var(--rd-navy), var(--rd-navy-light));
+    border-bottom: 3px solid var(--rd-orange);
+}
+.brand-accent { color: var(--rd-orange); }
+.raceday-nav .nav-link { color: rgba(255,255,255,.85); }
+.raceday-nav .nav-link:hover { color: #fff; }
+
+.role-badge { font-size: .75rem; letter-spacing: .04em; text-transform: uppercase; }
+.role-organizer { background: var(--rd-orange); }
+.role-participant { background: var(--rd-teal); }
+
+.raceday-footer { background: var(--rd-navy); color: rgba(255,255,255,.7); }
+
+/* ---------- Buttons ---------- */
+.btn-accent {
+    background: var(--rd-orange);
+    border-color: var(--rd-orange);
+    color: #fff;
+    font-weight: 600;
+}
+.btn-accent:hover { background: var(--rd-orange-dark); border-color: var(--rd-orange-dark); color: #fff; }
+
+a { color: var(--rd-blue); }
+
+/* ---------- Hero ---------- */
+.hero {
+    background:
+        repeating-linear-gradient(135deg, rgba(255,255,255,.05) 0 18px, transparent 18px 36px),
+        linear-gradient(120deg, var(--rd-navy), var(--rd-navy-light));
+    color: #fff;
+    border-radius: 1rem;
+    padding: 2.5rem 2rem;
+    border-bottom: 5px solid var(--rd-orange);
+}
+.hero h1 { font-weight: 800; }
+
+.page-title { font-weight: 800; color: var(--rd-navy); }
+
+/* ---------- Cards ---------- */
+.card { border: 0; border-radius: 1rem; box-shadow: 0 2px 10px rgba(11,31,58,.08); }
+.filter-card { border-left: 5px solid var(--rd-orange); }
+.auth-card { border-top: 5px solid var(--rd-orange); }
+.role-choice { padding: .9rem .5rem; line-height: 1.3; }
+.role-choice i { font-size: 1.6rem; }
+.btn-check:checked + .role-choice { background: var(--rd-navy); border-color: var(--rd-navy); color: #fff; }
+
+.event-card { overflow: hidden; transition: transform .15s ease, box-shadow .15s ease; }
+.event-card:hover { transform: translateY(-4px); box-shadow: 0 8px 22px rgba(11,31,58,.18); }
+.event-card-image { position: relative; height: 170px; background: var(--rd-navy); }
+.event-card-image img { width: 100%; height: 100%; object-fit: cover; }
+.event-type { position: absolute; top: .6rem; left: .6rem; }
+.event-status { position: absolute; top: .6rem; right: .6rem; }
+
+.detail-banner { border-radius: 1rem; overflow: hidden; max-height: 340px; background: var(--rd-navy); }
+.detail-banner img { width: 100%; max-height: 340px; object-fit: cover; }
+.banner-preview { max-width: 260px; border-radius: .5rem; }
+
+.info-list li { padding: .25rem 0; }
+.info-list i { color: var(--rd-orange); margin-right: .4rem; }
+.enrol-card { border-top: 5px solid var(--rd-orange); position: sticky; top: 90px; }
+
+/* ---------- Colour-coded badges ---------- */
+.badge-upcoming  { background: var(--rd-green); color: #fff; }
+.badge-today     { background: var(--rd-orange); color: #fff; }
+.badge-awaiting  { background: var(--rd-amber); color: #1c2733; }
+.badge-completed { background: var(--rd-blue); color: #fff; }
+.badge-default   { background: #6c7a89; color: #fff; }
+
+.type-run   { background: var(--rd-orange); color: #fff; }
+.type-walk  { background: var(--rd-teal); color: #fff; }
+.type-cycle { background: var(--rd-purple); color: #fff; }
+
+/* ---------- Tables ---------- */
+.table { --bs-table-bg: #fff; }
+.table thead th { background: var(--rd-navy); color: #fff; border: 0; font-weight: 600; }
+.finish-time { font-family: ui-monospace, Consolas, monospace; font-weight: 600; }
+.position-badge { font-weight: 800; color: var(--rd-navy); }
+.position-badge.podium { color: var(--rd-orange); font-size: 1.1rem; }
+
+/* ---------- Dashboard ---------- */
+.stat-card { color: #fff; border-radius: 1rem; padding: 1.2rem; text-align: center; }
+.stat-card i { font-size: 1.8rem; opacity: .85; }
+.stat-number { font-size: 2.4rem; font-weight: 800; line-height: 1.1; }
+.stat-events { background: linear-gradient(135deg, var(--rd-navy), var(--rd-navy-light)); }
+.stat-enrolments { background: linear-gradient(135deg, var(--rd-orange), var(--rd-orange-dark)); }
+.stat-results { background: linear-gradient(135deg, var(--rd-teal), var(--rd-green)); }
+
+/* ---------- Profile ---------- */
+.avatar-large { width: 140px; height: 140px; border-radius: 50%; object-fit: cover; border: 4px solid var(--rd-orange); background: #fff; }
+
+/* ---------- Empty state ---------- */
+.empty-state { background: #fff; border-radius: 1rem; padding: 3rem 1rem; box-shadow: 0 2px 10px rgba(11,31,58,.06); }
+.empty-state i { font-size: 3rem; color: var(--rd-orange); }
