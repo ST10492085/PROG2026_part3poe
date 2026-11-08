@@ -1,0 +1,54 @@
+# Starts the whole RaceDay system with ONE command:
+#
+#     docker compose up --build
+#
+#   sqlserver : SQL Server 2022 (database for the API)
+#   api       : Part 2 Web API   -> http://localhost:5065/swagger
+#   web       : Part 3 MVC app   -> http://localhost:5000
+#
+# Azure Blob Storage (banner / profile images): put your connection string in a file called
+# ".env" next to this file (see .env.example). Everything else works without it.
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "RaceDay_Passw0rd!"
+    volumes:
+      - sqldata:/var/opt/mssql
+    healthcheck:
+      # The API only starts once SQL Server accepts connections.
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q \"SELECT 1\" || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+
+  api:
+    build: ./PROG2026_part2
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    environment:
+      # Development = Swagger UI is switched on (handy for demos).
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=RaceDayDb;User Id=sa;Password=RaceDay_Passw0rd!;TrustServerCertificate=True;MultipleActiveResultSets=True"
+      AzureBlobStorage__ConnectionString: "${AZURE_STORAGE_CONNECTION_STRING:-}"
+      AzureBlobStorage__ContainerName: "${AZURE_STORAGE_CONTAINER:-raceday-images}"
+    ports:
+      - "5065:8080"
+    restart: on-failure
+
+  web:
+    build: ./PROG2026_part3
+    depends_on:
+      - api
+    environment:
+      # Inside Docker the API is reachable by its service name.
+      ApiSettings__BaseUrl: "http://api:8080/"
+    ports:
+      - "5000:8080"
+
+volumes:
+  sqldata:
