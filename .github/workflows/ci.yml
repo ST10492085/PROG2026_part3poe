@@ -1,0 +1,63 @@
+# GitHub Actions: runs on every push / pull request.
+# 1) checks the repository structure, 2) builds everything, 3) runs all unit tests,
+# 4) builds both Docker images (so a broken Dockerfile turns the build red).
+name: CI
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "**" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Fails the build when a required file or folder is missing.
+      - name: Validate repository structure
+        run: |
+          missing=0
+          for path in \
+            README.md \
+            RaceDay.sln \
+            docker-compose.yml \
+            PROG2026_part2/PROG2026_part2.csproj \
+            PROG2026_part2/Dockerfile \
+            PROG2026_part2/Controllers \
+            PROG2026_part2/tests/PROG2026_part2.Tests \
+            PROG2026_part3/PROG2026_part3.csproj \
+            PROG2026_part3/Dockerfile \
+            PROG2026_part3/Controllers \
+            PROG2026_part3/Views \
+            tests/PROG2026_part3.Tests
+          do
+            if [ ! -e "$path" ]; then
+              echo "::error::Missing required path: $path"
+              missing=1
+            fi
+          done
+          exit $missing
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: dotnet restore RaceDay.sln
+
+      - name: Build
+        run: dotnet build RaceDay.sln --no-restore --configuration Release
+
+      - name: Run unit tests
+        run: dotnet test RaceDay.sln --no-build --configuration Release --verbosity normal
+
+      - name: Build API Docker image
+        run: docker build -t raceday-api ./PROG2026_part2
+
+      - name: Build MVC Docker image
+        run: docker build -t raceday-web ./PROG2026_part3
