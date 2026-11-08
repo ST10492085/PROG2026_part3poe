@@ -1,0 +1,64 @@
+@model ProfileViewModel
+@{
+    ViewData["Title"] = "My Profile";
+    string avatar = string.IsNullOrEmpty(Model.ProfilePictureUrl)
+        ? Url.Content("~/images/default-avatar.svg")
+        : Model.ProfilePictureUrl;
+}
+<h1 class="page-title">My Profile</h1>
+
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card text-center profile-card">
+            <div class="card-body">
+                @* The picture is stored in Azure Blob Storage (uploaded through the API). *@
+                <img src="@avatar" alt="Profile picture" class="avatar-large mb-3" />
+                <h5 class="mb-0">@Model.FirstName @Model.LastName</h5>
+                <span class="badge role-badge @(Model.Role == "Organizer" ? "role-organizer" : "role-participant") mb-2">@Model.Role</span>
+                <p class="text-muted small">Member since @Model.MemberSince.ToString("dd MMM yyyy")</p>
+
+                <form asp-action="UploadPicture" method="post" enctype="multipart/form-data">
+                    <input type="file" name="picture" accept="image/png,image/jpeg,image/gif,image/webp" class="form-control form-control-sm mb-2" required />
+                    <button type="submit" class="btn btn-sm btn-accent w-100"><i class="bi bi-upload"></i> Upload picture</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Personal information</h5>
+                <form asp-action="Update" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="FirstName" class="form-label"></label>
+                            <input asp-for="FirstName" class="form-control" />
+                            <span asp-validation-for="FirstName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="LastName" class="form-label"></label>
+                            <input asp-for="LastName" class="form-control" />
+                            <span asp-validation-for="LastName" class="text-danger small"></span>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input class="form-control" value="@Model.Email" disabled />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Phone" class="form-label"></label>
+                        <input asp-for="Phone" class="form-control" />
+                        <span asp-validation-for="Phone" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Address" class="form-label"></label>
+                        <input asp-for="Address" class="form-control" />
+                    </div>
+                    <button type="submit" class="btn btn-accent">Save changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
