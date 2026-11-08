@@ -1,0 +1,84 @@
+@model OrganizerDashboardModel
+@{
+    ViewData["Title"] = "Dashboard";
+    var upcoming = Model.Events
+        .Where(e => e.EventDate.Date >= DateTime.Now.Date)
+        .OrderBy(e => e.EventDate)
+        .ToList();
+}
+<h1 class="page-title">Organiser dashboard</h1>
+<p class="text-muted">Welcome back, @Model.OrganizerName.</p>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="stat-card stat-events"><i class="bi bi-calendar-event"></i><div class="stat-number">@Model.EventCount</div><div>Events created</div></div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card stat-enrolments"><i class="bi bi-people"></i><div class="stat-number">@Model.EnrollmentCount</div><div>Total enrolments</div></div>
+    </div>
+    <div class="col-md-4">
+        <div class="stat-card stat-results"><i class="bi bi-trophy"></i><div class="stat-number">@Model.ResultCount</div><div>Results captured</div></div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-alarm"></i> Upcoming event dates</h5>
+                @if (upcoming.Count == 0)
+                {
+                    <p class="text-muted">No upcoming events.</p>
+                }
+                else
+                {
+                    <ul class="list-group list-group-flush">
+                        @foreach (var e in upcoming)
+                        {
+                            <li class="list-group-item d-flex justify-content-between">
+                                <span>@e.EventName</span>
+                                <span class="text-muted small">@e.EventDate.ToString("dd MMM yyyy")</span>
+                            </li>
+                        }
+                    </ul>
+                }
+                <a class="btn btn-accent mt-3 w-100" asp-controller="OrganizerEvents" asp-action="Create"><i class="bi bi-plus-lg"></i> New event</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Your events</h5>
+                @if (Model.Events.Count == 0)
+                {
+                    <p class="text-muted">You have not created any events yet.</p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead><tr><th>Event</th><th>Date</th><th class="text-center">Enrolments</th><th class="text-center">Results</th><th></th></tr></thead>
+                            <tbody>
+                                @foreach (var e in Model.Events.OrderBy(x => x.EventDate))
+                                {
+                                    string status = DisplayHelper.EventStatus(e.EventDate, DateTime.Now);
+                                    <tr>
+                                        <td>@e.EventName <span class="badge @DisplayHelper.StatusBadgeClass(status)">@status</span></td>
+                                        <td>@e.EventDate.ToString("dd MMM yyyy")</td>
+                                        <td class="text-center">@e.EnrollmentCount</td>
+                                        <td class="text-center">@e.ResultCount</td>
+                                        <td class="text-end">
+                                            <a class="btn btn-sm btn-outline-secondary" asp-controller="OrganizerEnrolments" asp-action="Index" asp-route-eventId="@e.EventId">Enrolments</a>
+                                            <a class="btn btn-sm btn-outline-secondary" asp-controller="OrganizerResults" asp-action="Index" asp-route-eventId="@e.EventId">Results</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
