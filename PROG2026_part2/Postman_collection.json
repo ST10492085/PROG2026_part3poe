@@ -1,0 +1,121 @@
+{
+  "info": {
+    "name": "RaceDay API - Sample",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://localhost:5001"
+    }
+  ],
+  "item": [
+    {
+      "name": "Register Organizer",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api","auth","register"] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"firstName\": \"Demo\",\n  \"lastName\": \"Organizer\",\n  \"email\": \"demo.org@example.test\",\n  \"password\": \"Organizer123!\",\n  \"role\": \"Organizer\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Login Organizer",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api","auth","login"] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"demo.org@example.test\",\n  \"password\": \"Organizer123!\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Create Event (Organizer)",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "url": { "raw": "{{baseUrl}}/api/events", "host": ["{{baseUrl}}"], "path": ["api","events"] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Sample Event\",\n  \"description\": \"Sample\",\n  \"eventDate\": \"2026-12-01T09:00:00Z\",\n  \"location\": \"Test Stadium\",\n  \"distanceKm\": 10,\n  \"eventType\": \"Run\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Create Category (Organizer)",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "url": { "raw": "{{baseUrl}}/api/events/{{eventId}}/categories", "host": ["{{baseUrl}}"], "path": ["api","events","{{eventId}}","categories"] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"10K Open\",\n  \"description\": \"Open\",\n  \"minAge\": 18,\n  \"maxAge\": 99,\n  \"distanceKm\": 10\n}"
+        }
+      }
+    },
+    {
+      "name": "Register Participant",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "url": { "raw": "{{baseUrl}}/api/auth/register", "host": ["{{baseUrl}}"], "path": ["api","auth","register"] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"firstName\": \"Demo\",\n  \"lastName\": \"Participant\",\n  \"email\": \"demo.part@example.test\",\n  \"password\": \"Participant123!\",\n  \"role\": \"Participant\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Login Participant",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "url": { "raw": "{{baseUrl}}/api/auth/login", "host": ["{{baseUrl}}"], "path": ["api","auth","login"] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"demo.part@example.test\",\n  \"password\": \"Participant123!\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Enroll Participant (Participant)",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "url": { "raw": "{{baseUrl}}/api/events/{{eventId}}/enrollments", "host": ["{{baseUrl}}"], "path": ["api","events","{{eventId}}","enrollments"] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"categoryId\": {{categoryId}}\n}"
+        }
+      }
+    },
+    {
+      "name": "Record Result (Organizer)",
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "url": { "raw": "{{baseUrl}}/api/events/{{eventId}}/results", "host": ["{{baseUrl}}"], "path": ["api","events","{{eventId}}","results"] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": {{participantId}},\n  \"categoryId\": {{categoryId}},\n  \"finishTime\": \"00:30:00\",\n  \"position\": 1\n}"
+        }
+      }
+    },
+    {
+      "name": "Get Event Results (Public)",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{baseUrl}}/api/events/{{eventId}}/results", "host": ["{{baseUrl}}"], "path": ["api","events","{{eventId}}","results"] }
+      }
+    }
+  ]
+}
